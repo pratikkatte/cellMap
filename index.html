@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell World - 3D Interactive Exploration</title>
+    <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="controls">
+            <h2>Controls</h2>
+            <p id="mode-display">Mode: Landscape</p>
+            <div id="landscape-controls">
+                <p><strong>Landscape Mode:</strong></p>
+                <p>Arrow Keys: Move (Up/Down/Left/Right)</p>
+                <p><strong>Click on a cell to enter it</strong></p>
+                <p><em>Or zoom in to enter overview mode</em></p>
+            </div>
+            <div id="walkthrough-controls" style="display: none;">
+                <p><strong>Walkthrough Mode:</strong></p>
+                <p>Arrow Keys / WASD: Walk through cell</p>
+                <p>Q / Space: Move up</p>
+                <p>Z / Shift: Move down</p>
+                <p>Mouse: Look around (click to enable)</p>
+                <p><strong>Mouse Wheel / Pinch: Zoom out to Overview</strong></p>
+            </div>
+            <div id="overview-controls" style="display: none;">
+                <p><strong>Overview Mode:</strong></p>
+                <p>Mouse Drag: Rotate around cell</p>
+                <p>Right-Click Drag: Pan</p>
+                <p><strong>Mouse Wheel / Pinch: Zoom in/out</strong></p>
+                <p>Zoom in → Walkthrough Mode</p>
+                <p>Zoom out → Landscape Mode</p>
+            </div>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
+

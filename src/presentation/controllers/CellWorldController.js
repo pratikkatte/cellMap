@@ -64,6 +64,11 @@ export class CellWorldController extends ApplicationController {
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.hoveredCell = null;
+        
+        // Engine architecture integration (optional, set by main.js)
+        this.engine = null;
+        this.eventBus = null;
+        this.sceneManager = null;
     }
 
     async initialize() {
@@ -223,6 +228,11 @@ export class CellWorldController extends ApplicationController {
         this.modeManager.switchTo('landscape');
         this.updateModeDisplay();
         
+        // Publish event if eventBus is available
+        if (this.eventBus) {
+            this.eventBus.publish('mode:changed', { mode: 'landscape' });
+        }
+        
         // Add ground plane
         this.addGroundPlane();
     }
@@ -372,6 +382,14 @@ export class CellWorldController extends ApplicationController {
                 )
             );
             this.orbitalCameraController.setRadius(this.targetDistance);
+            
+            // Publish zoom event if eventBus is available
+            if (this.eventBus) {
+                this.eventBus.publish('zoom:changed', { 
+                    distance: this.targetDistance,
+                    mode: this.currentMode 
+                });
+            }
         } else if (this.currentMode === 'walkthrough') {
             const direction = new THREE.Vector3();
             this.renderer.getCamera().getWorldDirection(direction);
@@ -437,6 +455,11 @@ export class CellWorldController extends ApplicationController {
 
         this.modeManager.switchTo('walkthrough');
         this.updateModeDisplay();
+        
+        // Publish event if eventBus is available
+        if (this.eventBus) {
+            this.eventBus.publish('mode:changed', { mode: 'walkthrough' });
+        }
     }
 
     transitionToOverview() {
@@ -465,6 +488,11 @@ export class CellWorldController extends ApplicationController {
 
         this.modeManager.switchTo('overview');
         this.updateModeDisplay();
+        
+        // Publish event if eventBus is available
+        if (this.eventBus) {
+            this.eventBus.publish('mode:changed', { mode: 'overview' });
+        }
     }
 
     updateModeDisplay() {

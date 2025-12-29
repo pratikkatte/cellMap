@@ -15,7 +15,7 @@ export class ThreeRenderer extends IRenderer {
     }
 
     initialize() {
-        // Create scene
+        // Create scene (can be overridden by setScene)
         this.scene = new THREE.Scene();
 
         // Create camera
@@ -41,6 +41,29 @@ export class ThreeRenderer extends IRenderer {
         window.addEventListener('resize', () => this.onWindowResize());
     }
 
+    /**
+     * Set the scene from SceneManager
+     * @param {THREE.Scene} scene - Scene from SceneManager
+     */
+    setScene(scene) {
+        if (scene instanceof THREE.Scene) {
+            // Move lighting from old scene to new scene
+            if (this.scene) {
+                const lights = [];
+                this.scene.children.forEach(child => {
+                    if (child instanceof THREE.Light) {
+                        lights.push(child);
+                    }
+                });
+                lights.forEach(light => {
+                    this.scene.remove(light);
+                    scene.add(light);
+                });
+            }
+            this.scene = scene;
+        }
+    }
+
     setupLighting() {
         // Ambient light
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -57,9 +80,17 @@ export class ThreeRenderer extends IRenderer {
         this.scene.add(fillLight);
     }
 
-    render() {
-        if (this.renderer && this.scene && this.camera) {
-            this.renderer.render(this.scene, this.camera);
+    /**
+     * Render the scene
+     * @param {THREE.Scene} scene - Optional scene (uses this.scene if not provided)
+     * @param {THREE.Camera} camera - Optional camera (uses this.camera if not provided)
+     */
+    render(scene = null, camera = null) {
+        const renderScene = scene || this.scene;
+        const renderCamera = camera || this.camera;
+        
+        if (this.renderer && renderScene && renderCamera) {
+            this.renderer.render(renderScene, renderCamera);
         }
     }
 

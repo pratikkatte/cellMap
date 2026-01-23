@@ -4,6 +4,16 @@
 export class PluginManager {
     constructor() {
         this.plugins = new Map();
+        this.installedPlugins = new Map();
+        this.engine = null;
+    }
+
+    /**
+     * Initialize plugin manager with engine
+     * @param {Engine} engine - Engine instance
+     */
+    async initialize(engine) {
+        this.engine = engine;
     }
 
     /**
@@ -29,6 +39,7 @@ export class PluginManager {
             throw new Error(`Plugin ${name} not found`);
         }
         plugin.install(context);
+        this.installedPlugins.set(name, plugin);
     }
 
     /**
@@ -39,8 +50,21 @@ export class PluginManager {
         this.plugins.forEach((plugin, name) => {
             try {
                 plugin.install(context);
+                this.installedPlugins.set(name, plugin);
             } catch (error) {
                 console.error(`Error installing plugin ${name}:`, error);
+            }
+        });
+    }
+
+    /**
+     * Update all installed plugins
+     * @param {number} deltaTime - Time since last update
+     */
+    update(deltaTime) {
+        this.installedPlugins.forEach((plugin) => {
+            if (plugin.update && typeof plugin.update === 'function') {
+                plugin.update(deltaTime);
             }
         });
     }

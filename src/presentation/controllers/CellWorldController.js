@@ -14,6 +14,7 @@ import { ModeManager } from '../../application/modes/ModeManager.js';
 import { CellRenderer } from '../../infrastructure/rendering/CellRenderer.js';
 import { LandscapeRenderer } from '../../infrastructure/rendering/LandscapeRenderer.js';
 import { Position } from '../../domain/valueObjects/Position.js';
+import { LandingPage } from '../views/LandingPage.js';
 import * as THREE from 'three';
 
 /**
@@ -48,7 +49,11 @@ export class CellWorldController extends ApplicationController {
         // State
         this.currentCell = null;
         this.landscape = null;
-        this.currentMode = 'landscape';
+        this.currentMode = 'landing';
+        this.currentCellType = null;
+
+        // Landing page
+        this.landingPage = null;
         
         // Zoom and mode transition
         this.targetDistance = 20;
@@ -141,12 +146,16 @@ export class CellWorldController extends ApplicationController {
         // Initialize rendering
         this.cellRenderer = new CellRenderer(this.materialManager);
         this.landscapeRenderer = new LandscapeRenderer(this.materialManager);
-        
+
+        // Initialize landing page
+        const appContainer = document.getElementById('app');
+        this.landingPage = new LandingPage(appContainer, this.eventBus);
+
         // Setup event listeners
         this.setupEventListeners();
-        
-        // Create initial landscape
-        this.enterLandscapeMode();
+
+        // Check URL and load appropriate view
+        this.handleInitialRoute();
     }
 
     setupEventListeners() {
@@ -170,19 +179,145 @@ export class CellWorldController extends ApplicationController {
             }
         });
 
-        // Exit cell with 'E' key
+        // Exit cell with 'E' key, return to landing with 'H' key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'e' || event.key === 'E') {
                 if (this.currentMode === 'walkthrough' || this.currentMode === 'overview') {
                     this.exitCell();
                 }
             }
+            if (event.key === 'h' || event.key === 'H') {
+                if (this.currentMode !== 'landing') {
+                    this.enterLandingMode();
+                }
+            }
+        });
+
+        // Listen for cell selection from landing page
+        document.addEventListener('cellSelected', (event) => {
+            const { cellType } = event.detail;
+            this.onLandingCellSelected(cellType);
         });
 
         // Input handler wheel events
         this.inputHandler.on('wheel', (data) => {
             this.handleZoom(data.deltaY);
         });
+
+        // Handle browser back/forward navigation
+        window.addEventListener('popstate', (event) => {
+            this.handleRouteChange(event.state);
+        });
+    }
+
+    /**
+     * Handle initial route on page load
+     */
+    handleInitialRoute() {
+        const path = window.location.pathname;
+        const cellMatch = path.match(/^\/cell\/([a-z-]+)$/);
+
+        if (cellMatch) {
+            const cellId = cellMatch[1];
+            // Import cellTypes to validate
+            import('../../config/cellTypes.config.js').then(({ cellTypes }) => {
+                const cellType = cellTypes.find(c => c.id === cellId && c.available);
+                if (cellType) {
+                    this.currentCellType = cellType;
+                    this.enterCellInterior({ x: 0, y: 0, z: 0 });
+                } else {
+                    // Invalid cell type, go to landing
+                    this.enterLandingMode();
+                    this.updateUrl('/');
+                }
+            });
+        } else {
+            // Default to landing page
+            this.enterLandingMode();
+        }
+    }
+
+    /**
+     * Handle route change from browser navigation
+     */
+    handleRouteChange(state) {
+        if (state && state.cellType) {
+            // Navigate to cell view
+            this.currentCellType = state.cellType;
+            if (this.landingPage.isVisible()) {
+                this.landingPage.hide().then(() => {
+                    this.enterCellInterior({ x: 0, y: 0, z: 0 });
+                });
+            } else {
+                this.enterCellInterior({ x: 0, y: 0, z: 0 });
+            }
+        } else {
+            // Navigate to landing
+            this.enterLandingMode();
+        }
+    }
+
+    /**
+     * Update the browser URL
+     */
+    updateUrl(path, state = null) {
+        window.history.pushState(state, '', path);
+    }
+
+    /**
+     * Replace the browser URL without adding to history
+     */
+    replaceUrl(path, state = null) {
+        window.history.replaceState(state, '', path);
+    }
+
+    enterLandingMode(updateHistory = true) {
+        this.currentMode = 'landing';
+        this.currentCell = null;
+        this.currentCellType = null;
+        this.landscape = null;
+
+        // Exit pointer lock if active
+        if (document.pointerLockElement === document.body) {
+            document.exitPointerLock();
+        }
+
+        // Disable camera controllers
+        this.firstPersonCameraController.setEnabled(false);
+        this.orbitalCameraController.setEnabled(false);
+
+        // Clear the 3D scene
+        this.renderer.clearScene();
+
+        // Show landing page
+        this.landingPage.show();
+
+        // Update URL
+        if (updateHistory) {
+            this.updateUrl('/', null);
+        }
+
+        // Update mode display
+        this.updateModeDisplay();
+
+        // Publish event if eventBus is available
+        if (this.eventBus) {
+            this.eventBus.publish('mode:changed', { mode: 'landing' });
+        }
+    }
+
+    async onLandingCellSelected(cellType) {
+        // Store selected cell type
+        this.currentCellType = cellType;
+
+        // Update URL
+        this.updateUrl(`/cell/${cellType.id}`, { cellType });
+
+        // Hide landing page
+        await this.landingPage.hide();
+
+        // Enter cell interior directly (skip landscape for now)
+        this.enterCellInterior({ x: 0, y: 0, z: 0 });
     }
 
     enterLandscapeMode() {
@@ -497,6 +632,7 @@ export class CellWorldController extends ApplicationController {
 
     updateModeDisplay() {
         const modeDisplay = document.getElementById('mode-display');
+        const controlsPanel = document.getElementById('controls');
         const landscapeControls = document.getElementById('landscape-controls');
         const walkthroughControls = document.getElementById('walkthrough-controls');
         const overviewControls = document.getElementById('overview-controls');
@@ -505,8 +641,15 @@ export class CellWorldController extends ApplicationController {
         if (walkthroughControls) walkthroughControls.style.display = 'none';
         if (overviewControls) overviewControls.style.display = 'none';
 
+        // Hide controls panel when in landing mode
+        if (controlsPanel) {
+            controlsPanel.style.display = this.currentMode === 'landing' ? 'none' : 'block';
+        }
+
         if (modeDisplay) {
-            if (this.currentMode === 'walkthrough') {
+            if (this.currentMode === 'landing') {
+                modeDisplay.textContent = '';
+            } else if (this.currentMode === 'walkthrough') {
                 modeDisplay.textContent = 'Mode: Walkthrough (Zoom out for Overview)';
                 if (walkthroughControls) walkthroughControls.style.display = 'block';
             } else if (this.currentMode === 'overview') {

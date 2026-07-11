@@ -1,0 +1,14 @@
+import type { TourStop } from '../app/types'
+
+export const tourStops: TourStop[] = [
+  { title: 'A complete bacterial cell', description: 'This rod-shaped cell is inspired by Escherichia coli. Its compact envelope contains a crowded, membrane-free interior built for rapid growth and adaptation.', structure: 'outerMembrane', position: [2.7, 1.6, 2.8], target: [0, 0, 0] },
+  { title: 'Outer membrane & LPS', description: 'The asymmetric outer membrane is unique to Gram-negative bacteria. Short surface stalks suggest lipopolysaccharide, while porins provide selective routes for small molecules.', structure: 'outerMembrane', position: [0.4, 0.8, 1.35], target: [0.2, 0, 0] },
+  { title: 'Periplasm & cell wall', description: 'Between the two membranes lies the active periplasm. Its pale, thin peptidoglycan net resists osmotic pressure without becoming a thick Gram-positive wall.', structure: 'peptidoglycan', position: [0.5, 0.55, 0.9], target: [0.25, 0, 0] },
+  { title: 'Inner membrane', description: 'The inner membrane encloses the cytoplasm and hosts transport, respiration, and ATP production. Bacteria have no mitochondria; energy conversion happens here.', structure: 'innerMembrane', position: [0.3, 0.34, 0.67], target: [0.1, 0, 0] },
+  { title: 'Crowded cytoplasm', description: 'The cytoplasm is a dense solution of proteins, metabolites, RNA, ions, and molecular machines. Motion is gentle and confined rather than fast or gas-like.', position: [0.25, 0.12, 0.28], target: [0, 0, 0] },
+  { title: 'The nucleoid', description: 'The chromosome occupies an irregular nucleoid with no surrounding membrane. Folding and DNA-binding proteins compact it while preserving access to genes.', structure: 'nucleoid', position: [0.15, 0.14, 0.3], target: [0, 0, 0] },
+  { title: 'Ribosomes', description: 'Hundreds of visible ribosomes represent a much larger cellular population. They are enriched outside the densest chromosome core and continuously build proteins.', structure: 'ribosome', position: [0.45, 0.12, 0.24], target: [0.2, 0, 0] },
+  { title: 'Coupled gene expression', description: 'Because there is no nucleus, a ribosome can begin translating an mRNA while RNA polymerase is still transcribing it. This direct coupling is a hallmark of bacterial organization.', structure: 'chromosome', position: [0.3, 0.17, 0.25], target: [0.02, 0, 0] },
+  { title: 'Flagellar motor', description: 'A basal body spans the envelope and uses ion flow to drive rotation. The hook transmits torque to a long external helical filament.', structure: 'flagellarMotor', position: [-0.55, -0.55, 0.7], target: [-0.72, -0.24, -0.2] },
+  { title: 'One cell, integrated systems', description: 'Envelope protection, metabolism, information flow, and motility operate in the same tiny crowded volume. Scale, abundance, and motion are compressed here for clarity.', position: [2.7, 1.6, 2.8], target: [0, 0, 0] },
+]

@@ -1,187 +1,85 @@
-# Cell World - 3D Interactive Exploration
+# Inside a Bacterial Cell
 
-An interactive 3D cell world built with Three.js where you can navigate through a landscape of cells and explore their interior organelles.
+An immersive, browser-based exploration of a simplified *Escherichia coli*-inspired Gram-negative bacterium. The experience is built with React, TypeScript, Vite, Three.js, React Three Fiber, Drei, and Zustand. All biological forms are procedural; there are no downloaded 3D models or texture assets.
 
-## 🏗️ Architecture
+## Run locally
 
-This project uses **Clean Architecture** principles with a layered design:
-
-- **Domain Layer**: Core business logic (entities, value objects, interfaces)
-- **Application Layer**: Use cases, commands, and application services
-- **Infrastructure Layer**: Three.js rendering, input handling, resource management
-- **Presentation Layer**: UI controllers and coordination
-- **Plugin System**: Extensible architecture for adding features
-
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
-
-## ✨ Features
-
-- **Landscape Mode**: Navigate through a 3D world containing multiple cells
-- **Walkthrough Mode**: First-person view to walk through the cell interior
-- **Overview Mode**: Google Earth-style orbital view to see all cell components from above
-- **Interactive Navigation**: Arrow keys for movement, mouse for looking around
-- **All Organelles**: Nucleus, ER, Golgi, Mitochondria, Lysosomes, Peroxisomes, Ribosomes, Vacuole, and Centrosome
-- **Extensible Architecture**: Easy to add new organelles, modes, and features through plugins
-
-## 🚀 Installation
-
-1. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
-```
-
-2. Start the development server:
-```bash
 npm run dev
-# or
-yarn dev
 ```
 
-3. Open your browser to the URL shown (typically `http://localhost:5173`)
+Open the local address printed by Vite. To create a production bundle:
 
-## 🎮 Controls
-
-### Landscape Mode
-- **Arrow Keys / WASD**: Move forward, backward, left, right
-- **Mouse**: Click to enable mouse look (pointer lock)
-- **Click on a cell**: Enter the cell interior
-
-### Walkthrough Mode (Inside Cell)
-- **Arrow Keys / WASD**: Walk through the cell
-- **Q / Space**: Move up
-- **Z / Shift**: Move down
-- **Mouse**: Look around (click to enable pointer lock)
-- **Mouse Wheel**: Zoom out to Overview mode
-- **E Key**: Exit cell and return to landscape
-
-### Overview Mode (Google Earth Style)
-- **Mouse Drag**: Rotate around the cell
-- **Right-Click Drag**: Pan the view
-- **Mouse Wheel / Pinch**: Zoom in/out
-- **Zoom in**: Transition to Walkthrough mode
-- **Zoom out**: Transition to Landscape mode
-- **E Key**: Exit cell and return to landscape
-
-## 🎯 How to Play
-
-1. **Start in landscape mode** - you'll see multiple cells floating in space
-2. **Navigate toward a cell** - use arrow keys to move around
-3. **Enter the cell** - click on a cell or zoom in to enter
-4. **Explore the cell**:
-   - **Walkthrough Mode**: Walk through the cell like you're inside it
-   - **Overview Mode**: See all organelles from different angles
-   - **Zoom in/out**: Seamlessly transition between modes
-5. **Exit the cell** - Press 'E' or zoom out to return to the landscape
-
-## 📁 Project Structure
-
-```
-cellMap/
-├── ARCHITECTURE.md          # Detailed architecture documentation
-├── index.html               # Main HTML entry point
-├── package.json             # Dependencies
-├── README.md                # This file
-├── src/
-│   ├── main.js             # Application entry point
-│   │
-│   ├── domain/             # Domain Layer (Core Business Logic)
-│   │   ├── entities/       # Domain entities (Cell, Organelle, Landscape)
-│   │   ├── valueObjects/   # Value objects (Position, Color)
-│   │   ├── interfaces/     # Domain interfaces
-│   │   └── services/       # Domain services
-│   │
-│   ├── application/        # Application Layer (Use Cases)
-│   │   ├── commands/       # Command pattern implementations
-│   │   ├── useCases/       # Application use cases
-│   │   ├── repositories/   # Data access abstractions
-│   │   └── modes/          # Navigation modes
-│   │
-│   ├── infrastructure/     # Infrastructure Layer (Three.js)
-│   │   ├── rendering/      # Three.js renderers
-│   │   ├── input/         # Input handlers
-│   │   ├── resources/     # Resource managers
-│   │   └── factories/     # Factory implementations
-│   │
-│   ├── presentation/       # Presentation Layer (UI)
-│   │   └── controllers/   # Application controllers
-│   │
-│   ├── plugins/            # Plugin System
-│   │   ├── organelles/    # Organelle plugins
-│   │   └── examples/      # Example plugins
-│   │
-│   ├── organelles/         # Legacy organelles (using adapter pattern)
-│   ├── utils/             # Utility functions
-│   └── styles.css         # Styles
+```bash
+npm run build
+npm run preview
 ```
 
-## 🔌 Extending the Application
+The output in `dist/` is a static application and can be deployed to any static host.
 
-### Adding a New Organelle
+## Controls
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed instructions. Quick example:
+### Exterior orbit
 
-1. Create your organelle class in `src/organelles/`
-2. Create a plugin that registers it:
-```javascript
-import { OrganelleFactoryAdapter } from '../../infrastructure/factories/OrganelleFactoryAdapter.js';
-import { MyOrganelle } from '../../organelles/MyOrganelle.js';
+- Left drag: orbit
+- Scroll: zoom
+- Right drag: pan
+- Click a structure or its name: select and focus
+- `R`: reset the camera
+- **Enter cell**: transition to interior exploration
 
-export const MyOrganellePlugin = {
-    install(context) {
-        const { organelleRegistry, materialManager } = context;
-        const factory = new OrganelleFactoryAdapter('myOrganelle', MyOrganelle, materialManager);
-        organelleRegistry.register(factory);
-    }
-};
-```
+### Interior exploration
 
-3. Register the plugin in `main.js`
+- `W A S D`: move
+- Mouse: look after double-clicking the scene
+- `Q` / `E`: move down / up
+- `Shift`: move faster
+- `Escape`: release the pointer
+- **Exit cell**: return to exterior orbit
 
-### Adding a New Navigation Mode
+Movement is deliberately slow, and a capsule-shaped boundary keeps the camera near the cell interior.
 
-1. Create a mode class extending `NavigationMode`
-2. Register it with `ModeManager`
-3. Add transition logic in `CellWorldController`
+### Guided tour
 
-See `src/plugins/examples/CustomOrganelleExample.js` for a complete example.
+Choose **Guided tour** and use Previous/Next to visit ten stops covering the complete cell, envelope, cytoplasm, nucleoid, ribosomes, coupled gene expression, and motility apparatus.
 
-## 🛠️ Technologies
+## Features and architecture
 
-- **Three.js** (r160+) - 3D graphics library
-- **Vanilla JavaScript** (ES6 modules) - No framework dependencies
-- **Vite** - Development server and build tool
-- **Clean Architecture** - Layered architecture pattern
-- **SOLID Principles** - Object-oriented design principles
-- **Domain-Driven Design** - Domain-centric design approach
+- Nested capsule layers represent the outer membrane, periplasm, thin peptidoglycan mesh, inner membrane, and cytoplasmic volume.
+- Deterministically distributed instanced meshes render LPS-like stalks, porins, pili, ribosomes, metabolites, proteins, ions, and periplasmic particles without creating a React component for every molecule.
+- The main chromosome is a closed, highly folded procedural curve with DNA-associated particles. It occupies an irregular translucent density field that is explicitly not a membrane.
+- Plasmids are separate closed DNA loops.
+- The flagellar basal body spans the envelope and drives a subtly rotating external helical filament. Pili are shorter and thinner.
+- A sixteen-second coupled transcription/translation sequence highlights DNA, moves an RNA-polymerase-like complex, grows mRNA, recruits ribosomes before transcription finishes, and produces a nascent protein.
+- Zustand owns coarse application state only. Per-particle animation stays inside the Three.js render loop and uses pooled transforms rather than per-frame React updates.
+- Biological descriptions and tour content live in `src/data/` rather than UI components.
+- Camera-aware membrane opacity exposes nearby layers as the viewer approaches the cell.
+- WebGL failure has a readable fallback instead of leaving a blank screen.
 
-## 📚 Documentation
+## Quality settings
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Detailed architecture documentation
-- [src/plugins/examples/](./src/plugins/examples/) - Example plugins
+| Setting | Visible ribosomes | Cytoplasmic particles | Device pixel ratio |
+| --- | ---: | ---: | ---: |
+| Low | up to 150 | up to 500 | capped around 1.0 |
+| Medium | up to 400 | up to 1,500 | capped around 1.5 |
+| High | up to 800 | up to 4,000 | capped around 2.0 |
 
-## 🎨 Design Principles
+The density slider scales these counts from 25–100%. Adaptive DPR, low-poly shared geometry, instancing, deterministic procedural movement, frustum culling, and restrained lighting keep the experience responsive on integrated graphics. The production JavaScript bundle is well below the requested 10–15 MB initial-load target.
 
-- **Separation of Concerns**: Each layer has a specific responsibility
-- **Dependency Inversion**: High-level modules don't depend on low-level modules
-- **Open/Closed Principle**: Open for extension, closed for modification
-- **Single Responsibility**: Each class has one reason to change
-- **Plugin Architecture**: Extensible through plugins
+## Scientific scope and simplifications
 
-## 🚧 Future Enhancements
+This is an educational visualization, not a molecular-dynamics simulation. It preserves the major spatial and biological relationships of a Gram-negative prokaryote:
 
-- More detailed organelles (ribosomes, vesicles, etc.)
-- Molecular-level visualization
-- Simulation capabilities
-- Educational annotations
-- VR/AR support
-- Multiplayer capabilities
+- There is no nucleus or other membrane-bound organelle.
+- The thin peptidoglycan layer lies in the periplasm between the outer and inner membranes.
+- ATP synthase and respiratory activity are associated with the inner membrane, not mitochondria.
+- The nucleoid has no membrane, and ribosomes are somewhat excluded from its densest center.
+- Transcription and translation share the cytoplasm and can be coupled without a nuclear-export step.
+- The flagellar motor crosses the envelope and connects directly to its external filament.
 
-## 📝 License
+Molecular sizes, concentrations, motion amplitudes, surface coverage, opacity, and abundance are visually compressed or enlarged for clarity and browser performance. The displayed population is representative rather than quantitative. Cytoplasmic motion uses smooth bounded drift rather than solvent-scale diffusion, and complex protein structures are recognizable abstractions rather than atomistic models.
 
-[Add your license here]
+## Connecting future data or models
 
-## 🤝 Contributing
-
-Contributions are welcome! Please read the architecture documentation first to understand the design patterns used.
+The procedural abstractions can be replaced incrementally without changing the UI or exploration model. Experimentally derived structures could be loaded as compressed glTF assets in `src/cell/`, cryo-electron-tomography density could feed a dedicated volume shader, quantitative abundance tables could drive the quality-count maps, and measured trajectories or reaction events could replace seeded motion in the particle systems. Structure metadata and tour stops are already separated so citations, strain-specific values, or experimental annotations can be added independently.

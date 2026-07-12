@@ -6,6 +6,9 @@ import { Ribosomes } from './Ribosomes'
 import { FlagellarMotor, Flagellum, Pili } from './Motility'
 import { PeriplasmicParticles } from '../particles/PeriplasmicParticles'
 import { TranscriptionTranslation } from '../processes/TranscriptionTranslation'
+import { LacOperonPerturbation } from '../processes/LacOperonPerturbation'
+import { KnockoutDrugPerturbation } from '../processes/KnockoutDrugPerturbation'
+import { SystemsResponsePerturbation } from '../processes/SystemsResponsePerturbation'
 import { useAppStore } from '../app/store'
 
 export function Bacterium() {
@@ -23,5 +26,8 @@ export function Bacterium() {
     {layers.pili && <Pili />}
     {layers.flagellum && <Flagellum />}
     <TranscriptionTranslation />
+    <LacOperonPerturbation />
+    <KnockoutDrugPerturbation />
+    <SystemsResponsePerturbation />
   </group>
 }

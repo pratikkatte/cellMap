@@ -29,6 +29,9 @@ export function StructurePanel() {
   const setDensity = useAppStore((s) => s.setDensity)
   const setQuality = useAppStore((s) => s.setQuality)
   const setProcessActive = useAppStore((s) => s.setProcessActive)
+  const setLacPanelOpen = useAppStore((s) => s.setLacPanelOpen)
+  const setKnockoutPanelOpen = useAppStore((s) => s.setKnockoutPanelOpen)
+  const openSystemsExample = useAppStore((s) => s.openSystemsExample)
   return <aside className={`left-panel glass panel ${open ? '' : 'collapsed'}`}>
     <button className="collapse-button" onClick={() => togglePanel('left')} aria-label={open ? 'Collapse structure panel' : 'Expand structure panel'}>{open ? '‹' : '›'}</button>
     {open && <div className="panel-scroll">
@@ -57,7 +60,11 @@ export function StructurePanel() {
         <div className="control-title"><h3>Quality</h3></div>
         <div className="segmented">{(['low', 'medium', 'high'] as const).map((q) => <button className={quality === q ? 'active' : ''} key={q} onClick={() => setQuality(q)}>{q}</button>)}</div>
       </div>
-      <button className="process-button" onClick={() => setProcessActive(true)}><span className="process-icon">⌁</span><span><b>Gene expression</b><small>Run coupled transcription + translation</small></span><span>▶</span></button>
+      <button className="process-button knockout-launch" onClick={() => setKnockoutPanelOpen(true)}><span className="process-icon">Δ</span><span><b>Knockout + drug</b><small>Explore ΔtolC chemical-genetic fitness</small></span><span>→</span></button>
+      <button className="process-button systems-launch precise-launch" onClick={() => openSystemsExample('precise')}><span className="process-icon">P</span><span><b>PRECISE response</b><small>Explore transcriptome-wide regulation</small></span><span>→</span></button>
+      <button className="process-button systems-launch model-launch" onClick={() => openSystemsExample('iml1515')}><span className="process-icon">M</span><span><b>iML1515 metabolism</b><small>Explore predicted metabolic flux</small></span><span>→</span></button>
+      <button className="process-button lac-launch" onClick={() => setLacPanelOpen(true)}><span className="process-icon">L</span><span><b>Lac operon experiment</b><small>Induce a native bacterial gene network</small></span><span>→</span></button>
+      <button className="process-button secondary-process" onClick={() => setProcessActive(true)}><span className="process-icon">⌁</span><span><b>Gene expression</b><small>Run coupled transcription + translation</small></span><span>▶</span></button>
     </div>}
   </aside>
 }

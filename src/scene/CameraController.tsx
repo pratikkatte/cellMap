@@ -18,18 +18,24 @@ const focusPoints: Partial<Record<StructureId, THREE.Vector3>> = {
 }
 
 export function CameraController() {
-  const { camera, gl } = useThree()
+  const { camera, gl, size } = useThree()
   const controls = useRef<ComponentRef<typeof OrbitControls>>(null)
   const mode = useAppStore((s) => s.mode)
   const selected = useAppStore((s) => s.selected)
   const tourIndex = useAppStore((s) => s.tourIndex)
   const resetNonce = useAppStore((s) => s.resetNonce)
   const resetCamera = useAppStore((s) => s.resetCamera)
+  const lacRunNonce = useAppStore((s) => s.lacRunNonce)
+  const knockoutRunNonce = useAppStore((s) => s.knockoutRunNonce)
+  const systemsRunNonce = useAppStore((s) => s.systemsRunNonce)
   const keys = useRef<Record<string, boolean>>({})
   const yaw = useRef(0)
   const pitch = useRef(0)
   const focus = useRef({ active: false, target: new THREE.Vector3(), position: new THREE.Vector3() })
   const lastSelected = useRef<StructureId | null>(null)
+  const lastLacRun = useRef(lacRunNonce)
+  const lastKnockoutRun = useRef(knockoutRunNonce)
+  const lastSystemsRun = useRef(systemsRunNonce)
   const interiorEntry = useRef(0)
   const vectors = useMemo(() => ({ forward: new THREE.Vector3(), right: new THREE.Vector3(), move: new THREE.Vector3(), up: new THREE.Vector3(0, 1, 0) }), [])
 
@@ -83,6 +89,27 @@ export function CameraController() {
       const radial = Math.hypot(camera.position.y, camera.position.z)
       if (radial > radialLimit) { camera.position.y *= radialLimit / radial; camera.position.z *= radialLimit / radial }
       return
+    }
+    if (lacRunNonce !== lastLacRun.current) {
+      lastLacRun.current = lacRunNonce
+      focus.current.active = true
+      focus.current.target.set(-.04, .055, .09)
+      if (size.width < 900) focus.current.position.set(2.05, 1.18, 2.08)
+      else focus.current.position.set(1.12, .72, 1.16)
+    }
+    if (knockoutRunNonce !== lastKnockoutRun.current) {
+      lastKnockoutRun.current = knockoutRunNonce
+      focus.current.active = true
+      focus.current.target.set(.05, .05, .05)
+      if (size.width < 900) focus.current.position.set(2.25, 1.28, 2.2)
+      else focus.current.position.set(1.38, .78, 1.42)
+    }
+    if (systemsRunNonce !== lastSystemsRun.current) {
+      lastSystemsRun.current = systemsRunNonce
+      focus.current.active = true
+      focus.current.target.set(.04, .04, .02)
+      if (size.width < 900) focus.current.position.set(2.3, 1.3, 2.24)
+      else focus.current.position.set(1.48, .84, 1.52)
     }
     if (selected !== lastSelected.current) {
       lastSelected.current = selected

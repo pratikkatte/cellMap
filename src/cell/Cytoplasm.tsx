@@ -7,6 +7,9 @@ import { capsulePoint, mulberry32 } from '../utils/random'
 function ParticleClass({ count, size, color, speed, opacity, seed }: { count: number, size: number, color: string, speed: number, opacity: number, seed: number }) {
   const mesh = useRef<THREE.InstancedMesh>(null)
   const paused = useAppStore((s) => s.paused)
+  const lacPanelOpen = useAppStore((s) => s.lacPanelOpen)
+  const knockoutPanelOpen = useAppStore((s) => s.knockoutPanelOpen)
+  const systemsPanelOpen = useAppStore((s) => s.systemsPanelOpen)
   const samples = useMemo(() => {
     const random = mulberry32(seed)
     return Array.from({ length: count }, (_, i) => ({ p: new THREE.Vector3(...capsulePoint(random, .285)), phase: random() * Math.PI * 2, scale: .65 + random() * .7, i }))
@@ -28,7 +31,7 @@ function ParticleClass({ count, size, color, speed, opacity, seed }: { count: nu
     mesh.current.instanceMatrix.needsUpdate = true
   })
   return <instancedMesh ref={mesh} args={[undefined, undefined, count]} frustumCulled>
-    <icosahedronGeometry args={[1, 0]} /><meshStandardMaterial color={color} transparent opacity={opacity} roughness={.8} />
+    <icosahedronGeometry args={[1, 0]} /><meshStandardMaterial color={color} transparent opacity={opacity * (lacPanelOpen || knockoutPanelOpen || systemsPanelOpen ? .22 : 1)} roughness={.8} />
   </instancedMesh>
 }
 

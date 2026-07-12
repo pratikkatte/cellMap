@@ -26,6 +26,9 @@ export function Nucleoid() {
   const hovered = useAppStore((s) => s.hovered)
   const setSelected = useAppStore((s) => s.setSelected)
   const setHovered = useAppStore((s) => s.setHovered)
+  const lacPanelOpen = useAppStore((s) => s.lacPanelOpen)
+  const knockoutPanelOpen = useAppStore((s) => s.knockoutPanelOpen)
+  const systemsPanelOpen = useAppStore((s) => s.systemsPanelOpen)
   const curve = useMemo(makeChromosomeCurve, [])
   const dnaGeometry = useMemo(() => new THREE.TubeGeometry(curve, 520, .0052, 6, true), [curve])
   const associated = useMemo(() => {
@@ -53,7 +56,7 @@ export function Nucleoid() {
         <meshBasicMaterial color="#8b86aa" transparent opacity={active ? .105 : .045} depthWrite={false} />
       </mesh>
       <mesh geometry={dnaGeometry}>
-        <meshStandardMaterial color={active ? '#fff4db' : '#d7d0df'} emissive="#8c7998" emissiveIntensity={active ? .38 : .08} roughness={.7} />
+        <meshStandardMaterial color={active ? '#fff4db' : '#d7d0df'} emissive="#8c7998" emissiveIntensity={active ? .38 : .08} roughness={.7} transparent opacity={lacPanelOpen || knockoutPanelOpen || systemsPanelOpen ? .28 : 1} />
       </mesh>
       {associated.map((p, i) => <mesh key={i} position={p} scale={.012 + (i % 3) * .002}>
         <octahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#8193ac" roughness={.8} />

@@ -17,12 +17,16 @@ function Shell({ id, radius, color, opacity, roughness = 0.58 }: ShellProps) {
   const hovered = useAppStore((s) => s.hovered)
   const setSelected = useAppStore((s) => s.setSelected)
   const setHovered = useAppStore((s) => s.setHovered)
+  const lacPanelOpen = useAppStore((s) => s.lacPanelOpen)
+  const knockoutPanelOpen = useAppStore((s) => s.knockoutPanelOpen)
+  const systemsPanelOpen = useAppStore((s) => s.systemsPanelOpen)
 
   useFrame(({ camera }) => {
     if (!material.current) return
     const distance = camera.position.length()
     const near = THREE.MathUtils.smoothstep(distance, 0.28, 1.35)
-    const contextualOpacity = THREE.MathUtils.lerp(id === 'periplasm' ? 0.025 : 0.07, opacity, near)
+    let contextualOpacity = THREE.MathUtils.lerp(id === 'periplasm' ? 0.025 : 0.07, opacity, near)
+    if (lacPanelOpen || knockoutPanelOpen || systemsPanelOpen) contextualOpacity *= id === 'outerMembrane' ? .2 : id === 'innerMembrane' ? .45 : .35
     const dim = selected && selected !== id ? 0.58 : 1
     material.current.opacity = contextualOpacity * dim
     material.current.emissiveIntensity = hovered === id || selected === id ? 0.18 : 0.025

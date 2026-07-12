@@ -14,6 +14,9 @@ export function Ribosomes() {
   const selected = useAppStore((s) => s.selected)
   const setSelected = useAppStore((s) => s.setSelected)
   const setHovered = useAppStore((s) => s.setHovered)
+  const lacPanelOpen = useAppStore((s) => s.lacPanelOpen)
+  const knockoutPanelOpen = useAppStore((s) => s.knockoutPanelOpen)
+  const systemsPanelOpen = useAppStore((s) => s.systemsPanelOpen)
   const base = quality === 'high' ? 800 : quality === 'low' ? 150 : 400
   const count = Math.floor(base * density)
   const samples = useMemo(() => {
@@ -50,7 +53,7 @@ export function Ribosomes() {
     large.current.instanceMatrix.needsUpdate = true; small.current.instanceMatrix.needsUpdate = true
   })
   if (!layers.ribosomes) return null
-  const opacity = selected && selected !== 'ribosome' ? .3 : 1
+  const opacity = (selected && selected !== 'ribosome' ? .3 : 1) * (lacPanelOpen || knockoutPanelOpen || systemsPanelOpen ? .2 : 1)
   const events = {
     onClick: (e: { stopPropagation: () => void }) => { e.stopPropagation(); setSelected('ribosome') },
     onPointerOver: (e: { stopPropagation: () => void }) => { e.stopPropagation(); setHovered('ribosome'); document.body.style.cursor = 'pointer' },

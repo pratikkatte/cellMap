@@ -113,7 +113,7 @@
 @keyframes minimalMorph { to { border-radius: 55% 45% 57% 43%; transform: rotate(3deg) scale(1.02); } }
 
 @media (max-width: 960px) {
-  .landing-nav nav > a:not(.landing-nav-cta) { display: none; }
+  .landing-nav nav > a[href="#worlds"], .landing-nav nav > a[href="#how-it-works"] { display: none; }
   .landing-hero-copy { width: min(720px, calc(100% - 48px)); margin-left: 24px; }
   .landing-section-heading { grid-template-columns: 1fr; gap: 25px; }.landing-section-heading > p { max-width: 600px; }
   .live-world-card { grid-template-columns: 1fr; }.live-world-visual { min-height: 560px; order: 1; }.live-world-copy { order: 2; }
@@ -122,7 +122,7 @@
 }
 
 @media (max-width: 680px) {
-  .landing-nav { height: 72px; margin-bottom: -72px; padding-inline: 15px; }.landing-brand small { display: none; }.landing-nav .landing-nav-cta { padding: 9px 11px; }
+  .landing-nav { height: 72px; margin-bottom: -72px; padding-inline: 15px; }.landing-brand small, .landing-nav nav > a[href="/vision"] { display: none; }.landing-nav .landing-nav-cta { padding: 9px 11px; }
   .landing-hero { min-height: 760px; align-items: flex-start; }.landing-hero-art { background-position: 62% center; }.landing-hero:after { background: linear-gradient(90deg, rgba(3,10,13,.87), rgba(3,10,13,.28)), linear-gradient(0deg, #061013 0%, rgba(3,10,13,.36) 55%, rgba(3,9,12,.4)); }.landing-hero-copy { width: calc(100% - 32px); margin-left: 16px; padding-top: 145px; }.landing-overline { margin-bottom: 18px; }.landing-hero h1 { font-size: clamp(52px, 15vw, 68px); }.landing-hero-copy > p:not(.landing-overline) { font-size: 15px; line-height: 1.6; }.landing-hero-actions { width: 100%; flex-direction: column; }.landing-signal { left: 17px; right: auto; bottom: 22px; }
   .world-library { padding-block: 90px; }.landing-section-heading, .live-world-card, .future-heading, .future-world-grid, .landing-vision-callout { width: calc(100% - 24px); }.landing-section-heading { margin-bottom: 45px; }.landing-section-heading h2 { font-size: 44px; }
   .live-world-card { min-height: 0; border-radius: 21px; }.live-world-visual { min-height: 390px; }.live-world-copy { padding: 34px 24px 39px; }.live-status { margin-bottom: 30px; }.live-world-copy h2 { font-size: 43px; }.live-features small { letter-spacing: .06em; }.enter-world { width: 100%; display: flex; justify-content: space-between; }.ecoli-radar { transform: scale(.63); }.ecoli-cell { animation: none; transform: rotate(-13deg) scale(.67); }.ecoli-flagellum { margin-left: 340px; transform: rotate(10deg) scale(.7); }.visual-label { display: none; }
